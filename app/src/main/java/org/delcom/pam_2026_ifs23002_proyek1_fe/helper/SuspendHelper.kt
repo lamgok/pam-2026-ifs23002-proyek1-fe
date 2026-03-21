@@ -38,12 +38,19 @@ object SuspendHelper {
         return try {
             apiCall()
         } catch (e: HttpException) {
+            val code = e.code()
             val errorResponse = e.response()?.errorBody()?.string()
-            val jsonError = Gson().fromJson(errorResponse, ResponseMessage::class.java)
+            
+            val message = try {
+                val jsonError = Gson().fromJson(errorResponse, ResponseMessage::class.java)
+                jsonError?.message ?: "HTTP Error $code"
+            } catch (jsonEx: Exception) {
+                "HTTP Error $code"
+            }
 
             ResponseMessage(
                 status = "error",
-                message = jsonError?.message ?: "Server error"
+                message = message
             )
         } catch (e: Exception) {
             e.printStackTrace()
