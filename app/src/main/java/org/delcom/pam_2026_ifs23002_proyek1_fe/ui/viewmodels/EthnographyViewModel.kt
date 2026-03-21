@@ -1,5 +1,6 @@
 package org.delcom.pam_2026_ifs23002_proyek1_fe.ui.viewmodels
 
+import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -73,6 +74,68 @@ class EthnographyViewModel @Inject constructor(
         }
     }
 
+    fun upsert(
+        authToken: String,
+        id: String?,
+        tribeName: String,
+        region: String,
+        language: String,
+        traditionalHouse: String,
+        traditionalWeapon: String,
+        beliefSystem: String,
+        description: String
+    ) {
+        viewModelScope.launch {
+            val isEdit = id != null && id.isNotEmpty()
+            if (!isEdit) {
+                _uiState.update { it.copy(ethnographyAdd = EthnographyActionUIState.Loading) }
+            } else {
+                _uiState.update { it.copy(ethnographyChange = EthnographyActionUIState.Loading) }
+            }
+
+            val request = EthnographyRequest(
+                tribeName = tribeName,
+                region = region,
+                language = language,
+                traditionalHouse = traditionalHouse,
+                traditionalWeapon = traditionalWeapon,
+                beliefSystem = beliefSystem,
+                description = description
+            )
+
+            try {
+                val response = if (!isEdit) {
+                    repository.postEthnography(authToken, request)
+                } else {
+                    repository.putEthnography(authToken, id!!, request)
+                }
+
+                if (response.status == "success") {
+                    val successId = (response.data as? ResponseEthnographyAdd)?.ethnographyId ?: id
+                    val successState = EthnographyActionUIState.Success(response.message, successId)
+                    _uiState.update { state ->
+                        if (!isEdit) state.copy(ethnographyAdd = successState)
+                        else state.copy(ethnographyChange = successState)
+                    }
+                } else {
+                    Log.e("EthnographyViewModel", "API Error Body: ${response.message}")
+                    val errorState = EthnographyActionUIState.Error(response.message)
+                    _uiState.update { state ->
+                        if (!isEdit) state.copy(ethnographyAdd = errorState)
+                        else state.copy(ethnographyChange = errorState)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("EthnographyViewModel", "Upsert failed with exception", e)
+                val errorState = EthnographyActionUIState.Error(e.message ?: "Unknown error")
+                _uiState.update { state ->
+                    if (!isEdit) state.copy(ethnographyAdd = errorState)
+                    else state.copy(ethnographyChange = errorState)
+                }
+            }
+        }
+    }
+
     fun putUserMePhoto(authToken: String, file: MultipartBody.Part) {
         viewModelScope.launch {
             _uiState.update { it.copy(profilePhotoChange = EthnographyActionUIState.Loading) }
@@ -108,22 +171,6 @@ class EthnographyViewModel @Inject constructor(
         }
     }
 
-    fun postEthnography(authToken: String, request: EthnographyRequest) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(ethnographyAdd = EthnographyActionUIState.Loading) }
-            val response = runCatching { repository.postEthnography(authToken, request) }
-            _uiState.update { state ->
-                response.fold(
-                    onSuccess = {
-                        if (it.status == "success") EthnographyActionUIState.Success(it.message, it.data?.ethnographyId)
-                        else EthnographyActionUIState.Error(it.message)
-                    },
-                    onFailure = { EthnographyActionUIState.Error(it.message ?: "Unknown error") }
-                ).let { state.copy(ethnographyAdd = it) }
-            }
-        }
-    }
-
     fun getEthnographyById(authToken: String, id: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(ethnography = EthnographyUIState.Loading) }
@@ -136,22 +183,6 @@ class EthnographyViewModel @Inject constructor(
                     },
                     onFailure = { EthnographyUIState.Error(it.message ?: "Unknown error") }
                 ).let { state.copy(ethnography = it) }
-            }
-        }
-    }
-
-    fun putEthnography(authToken: String, id: String, request: EthnographyRequest) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(ethnographyChange = EthnographyActionUIState.Loading) }
-            val response = runCatching { repository.putEthnography(authToken, id, request) }
-            _uiState.update { state ->
-                response.fold(
-                    onSuccess = {
-                        if (it.status == "success") EthnographyActionUIState.Success(it.message)
-                        else EthnographyActionUIState.Error(it.message)
-                    },
-                    onFailure = { EthnographyActionUIState.Error(it.message ?: "Unknown error") }
-                ).let { state.copy(ethnographyChange = it) }
             }
         }
     }
