@@ -41,11 +41,12 @@ object SuspendHelper {
             val code = e.code()
             val errorResponse = e.response()?.errorBody()?.string()
             
+            // Mencoba mengekstrak pesan asli dari server
             val message = try {
                 val jsonError = Gson().fromJson(errorResponse, ResponseMessage::class.java)
                 jsonError?.message ?: "HTTP Error $code"
             } catch (jsonEx: Exception) {
-                "HTTP Error $code"
+                "HTTP Error $code: Terjadi kesalahan pada server"
             }
 
             ResponseMessage(
@@ -56,7 +57,7 @@ object SuspendHelper {
             e.printStackTrace()
             ResponseMessage(
                 status = "error",
-                message = e.message ?: "Unknown error"
+                message = e.message ?: "Terjadi kesalahan koneksi"
             )
         }
     }

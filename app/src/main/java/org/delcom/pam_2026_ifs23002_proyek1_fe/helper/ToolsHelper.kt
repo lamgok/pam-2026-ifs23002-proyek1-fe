@@ -2,13 +2,15 @@ package org.delcom.pam_2026_ifs23002_proyek1_fe.helper
 
 import android.content.Context
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.delcom.pam_2026_ifs23002_proyek1_fe.BuildConfig
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 object ToolsHelper {
     fun getUserImage(userId: String, t: String = "0"): String{
@@ -28,27 +30,26 @@ object ToolsHelper {
         uri: Uri,
         partName: String
     ): MultipartBody.Part {
-        val file = uriToFile(context, uri)
+        val contentResolver = context.contentResolver
+        val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
+        val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: "jpg"
+        
+        val file = File(context.cacheDir, "upload_${System.currentTimeMillis()}.$extension")
+        
+        val inputStream: InputStream? = contentResolver.openInputStream(uri)
+        val outputStream = FileOutputStream(file)
+        inputStream?.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
 
-        val requestFile = file
-            .asRequestBody("image/*".toMediaTypeOrNull())
+        val requestFile = RequestBody.create(mimeType.toMediaTypeOrNull(), file)
 
         return MultipartBody.Part.createFormData(
             partName,
             file.name,
             requestFile
         )
-    }
-
-    fun uriToFile(context: Context, uri: Uri): File {
-        val file = File.createTempFile("upload", ".tmp", context.cacheDir)
-
-        context.contentResolver.openInputStream(uri)?.use { input ->
-            file.outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
-
-        return file
     }
 }

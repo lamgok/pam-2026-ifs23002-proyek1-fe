@@ -3,91 +3,90 @@ package org.delcom.pam_2026_ifs23002_proyek1_fe.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /* =========================
-   BRAND COLORS (ETHNOGRAPHY THEME)
+   CULTURAL BRAND COLORS (ETHNOGRAPHY THEME)
    ========================= */
 
-val EthnoBlue = Color(0xFF1A73E8)
-val EthnoGreen = Color(0xFF34A853)
-val EthnoOrange = Color(0xFFFBBC04)
-val EthnoRed = Color(0xFFEA4335)
+val EthnoMaroon = Color(0xFF800000)
+val EthnoGold = Color(0xFFD4AF37)
+val EthnoEarth = Color(0xFF4B3621)
+val EthnoCream = Color(0xFFF5F5DC)
 
-val EthnoBlueSoft = Color(0xFFE8F0FE)
-val EthnoGreenSoft = Color(0xFFE6F4EA)
-val EthnoOrangeSoft = Color(0xFFFEF7E0)
-val EthnoRedSoft = Color(0xFFFCE8E6)
+val EthnoMaroonSoft = Color(0xFFF5E6E6)
+val EthnoGoldSoft = Color(0xFFFFF9E6)
+val EthnoEarthSoft = Color(0xFFEFEBE9)
 
 /* =========================
    LIGHT THEME
    ========================= */
 
-val md_theme_light_primary = EthnoBlue
+val md_theme_light_primary = EthnoMaroon
 val md_theme_light_onPrimary = Color.White
-val md_theme_light_primaryContainer = EthnoBlueSoft
-val md_theme_light_onPrimaryContainer = Color(0xFF001D47)
+val md_theme_light_primaryContainer = EthnoMaroonSoft
+val md_theme_light_onPrimaryContainer = Color(0xFF310000)
 
-val md_theme_light_secondary = EthnoGreen
-val md_theme_light_onSecondary = Color.White
-val md_theme_light_secondaryContainer = EthnoGreenSoft
-val md_theme_light_onSecondaryContainer = Color(0xFF002204)
+val md_theme_light_secondary = EthnoGold
+val md_theme_light_onSecondary = Color.Black
+val md_theme_light_secondaryContainer = EthnoGoldSoft
+val md_theme_light_onSecondaryContainer = Color(0xFF261900)
 
-val md_theme_light_tertiary = EthnoOrange
+val md_theme_light_tertiary = EthnoEarth
 val md_theme_light_onTertiary = Color.White
 
-val md_theme_light_error = EthnoRed
+val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_onError = Color.White
-val md_theme_light_errorContainer = EthnoRedSoft
+val md_theme_light_errorContainer = Color(0xFFFFDAD6)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
 
-val md_theme_light_background = Color(0xFFF9FAFB)
-val md_theme_light_onBackground = Color(0xFF1A1C1E)
+val md_theme_light_background = Color(0xFFFCF8F8)
+val md_theme_light_onBackground = Color(0xFF201A1A)
 
-val md_theme_light_surface = Color(0xFFFFFFFF)
-val md_theme_light_onSurface = Color(0xFF1A1C1E)
+val md_theme_light_surface = Color(0xFFFCF8F8)
+val md_theme_light_onSurface = Color(0xFF201A1A)
 
-val md_theme_light_surfaceVariant = Color(0xFFE1E2EC)
-val md_theme_light_onSurfaceVariant = Color(0xFF44474E)
+val md_theme_light_surfaceVariant = Color(0xFFF4DDDD)
+val md_theme_light_onSurfaceVariant = Color(0xFF524343)
 
-val md_theme_light_outline = Color(0xFF74777F)
-val md_theme_light_inverseSurface = Color(0xFF2F3033)
-val md_theme_light_inverseOnSurface = Color(0xFFF1F0F4)
-val md_theme_light_inversePrimary = Color(0xFFADC6FF)
-val md_theme_light_surfaceTint = EthnoBlue
+val md_theme_light_outline = Color(0xFF857373)
+val md_theme_light_inverseSurface = Color(0xFF362F2F)
+val md_theme_light_inverseOnSurface = Color(0xFFFBEEEE)
+val md_theme_light_inversePrimary = Color(0xFFFFB4AB)
+val md_theme_light_surfaceTint = EthnoMaroon
 val md_theme_light_shadow = Color(0xFF000000)
 
 /* =========================
    DARK THEME
    ========================= */
 
-val md_theme_dark_primary = Color(0xFFADC6FF)
-val md_theme_dark_onPrimary = Color(0xFF002E69)
-val md_theme_dark_primaryContainer = Color(0xFF004494)
-val md_theme_dark_onPrimaryContainer = EthnoBlueSoft
+val md_theme_dark_primary = Color(0xFFFFB4AB)
+val md_theme_dark_onPrimary = Color(0xFF690005)
+val md_theme_dark_primaryContainer = Color(0xFF93000A)
+val md_theme_dark_onPrimaryContainer = Color(0xFFFFDAD6)
 
-val md_theme_dark_secondary = Color(0xFF81D68B)
-val md_theme_dark_onSecondary = Color(0xFF003912)
-val md_theme_dark_secondaryContainer = Color(0xFF00531D)
-val md_theme_dark_onSecondaryContainer = EthnoGreenSoft
+val md_theme_dark_secondary = Color(0xFFEBC148)
+val md_theme_dark_onSecondary = Color(0xFF3E2E00)
+val md_theme_dark_secondaryContainer = Color(0xFF594400)
+val md_theme_dark_onSecondaryContainer = Color(0xFFFFE08D)
 
-val md_theme_dark_tertiary = Color(0xFFFFB900)
-val md_theme_dark_onTertiary = Color(0xFF452B00)
+val md_theme_dark_tertiary = Color(0xFFD7C1FF)
+val md_theme_dark_onTertiary = Color(0xFF3D2177)
 
 val md_theme_dark_error = Color(0xFFFFB4AB)
 val md_theme_dark_onError = Color(0xFF690005)
 val md_theme_dark_errorContainer = Color(0xFF93000A)
 val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
 
-val md_theme_dark_background = Color(0xFF1A1C1E)
-val md_theme_dark_onBackground = Color(0xFFE2E2E6)
+val md_theme_dark_background = Color(0xFF201A1A)
+val md_theme_dark_onBackground = Color(0xFFEDE0DF)
 
-val md_theme_dark_surface = Color(0xFF1A1C1E)
-val md_theme_dark_onSurface = Color(0xFFE2E2E6)
+val md_theme_dark_surface = Color(0xFF201A1A)
+val md_theme_dark_onSurface = Color(0xFFEDE0DF)
 
-val md_theme_dark_surfaceVariant = Color(0xFF44474E)
-val md_theme_dark_onSurfaceVariant = Color(0xFFC4C6D0)
+val md_theme_dark_surfaceVariant = Color(0xFF524343)
+val md_theme_dark_onSurfaceVariant = Color(0xFFD8C2C2)
 
-val md_theme_dark_outline = Color(0xFF8E9099)
-val md_theme_dark_inverseSurface = Color(0xFFE2E2E6)
-val md_theme_dark_inverseOnSurface = Color(0xFF1A1C1E)
-val md_theme_dark_inversePrimary = EthnoBlue
-val md_theme_dark_surfaceTint = Color(0xFFADC6FF)
+val md_theme_dark_outline = Color(0xFFA08C8C)
+val md_theme_dark_inverseSurface = Color(0xFFEDE0DF)
+val md_theme_dark_inverseOnSurface = Color(0xFF201A1A)
+val md_theme_dark_inversePrimary = EthnoMaroon
+val md_theme_dark_surfaceTint = Color(0xFFFFB4AB)
 val md_theme_dark_shadow = Color(0xFF000000)

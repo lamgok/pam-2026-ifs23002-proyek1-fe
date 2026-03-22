@@ -72,7 +72,7 @@ interface EthnographyApiService {
     ): ResponseMessage<ResponseEthnographies?>
 
     @Headers("Content-Type: application/json")
-    @POST("ethnographies/")
+    @POST("ethnographies")
     suspend fun postEthnography(
         @Header("Authorization") authToken: String,
         @Body request: EthnographyRequest
@@ -85,7 +85,7 @@ interface EthnographyApiService {
     ): ResponseMessage<ResponseEthnography?>
 
     @Headers("Content-Type: application/json")
-    @PUT("ethnographies/{id}/")
+    @PUT("ethnographies/{id}")
     suspend fun putEthnography(
         @Header("Authorization") authToken: String,
         @Path("id") id: String,
@@ -93,14 +93,14 @@ interface EthnographyApiService {
     ): ResponseMessage<String?>
 
     @Multipart
-    @PUT("ethnographies/{id}/image/")
+    @PUT("ethnographies/{id}/image")
     suspend fun putEthnographyImage(
         @Header("Authorization") authToken: String,
         @Path("id") id: String,
         @Part file: MultipartBody.Part
     ): ResponseMessage<String?>
 
-    @DELETE("ethnographies/{id}/")
+    @DELETE("ethnographies/{id}")
     suspend fun deleteEthnography(
         @Header("Authorization") authToken: String,
         @Path("id") id: String

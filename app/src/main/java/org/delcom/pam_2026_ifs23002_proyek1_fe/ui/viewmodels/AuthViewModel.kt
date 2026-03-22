@@ -1,5 +1,6 @@
 package org.delcom.pam_2026_ifs23002_proyek1_fe.ui.viewmodels
 
+import android.util.Log
 import androidx.annotation.Keep
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -67,7 +68,10 @@ class AuthViewModel @Inject constructor(
                         if (it.status == "success") AuthActionUIState.Success(it.data!!.userId)
                         else AuthActionUIState.Error(it.message)
                     },
-                    onFailure = { AuthActionUIState.Error(it.message ?: "Unknown error") }
+                    onFailure = { 
+                        Log.e("AuthViewModel", "Register failed", it)
+                        AuthActionUIState.Error(it.message ?: "Unknown error") 
+                    }
                 ).let { state.copy(authRegister = it) }
             }
         }
@@ -90,7 +94,10 @@ class AuthViewModel @Inject constructor(
                             AuthUIState.Success(it.data)
                         } else AuthUIState.Error(it.message)
                     },
-                    onFailure = { AuthUIState.Error(it.message ?: "Unknown error") }
+                    onFailure = { 
+                        Log.e("AuthViewModel", "Login failed", it)
+                        AuthUIState.Error(it.message ?: "Unknown error") 
+                    }
                 ).let { state.copy(auth = it) }
             }
         }
@@ -106,7 +113,10 @@ class AuthViewModel @Inject constructor(
             _uiState.update { state ->
                 response.fold(
                     onSuccess = { AuthLogoutUIState.Success(it.message) },
-                    onFailure = { AuthLogoutUIState.Error(it.message ?: "Unknown error") }
+                    onFailure = { 
+                        Log.e("AuthViewModel", "Logout failed", it)
+                        AuthLogoutUIState.Error(it.message ?: "Unknown error") 
+                    }
                 ).let { state.copy(authLogout = it, auth = AuthUIState.Idle) }
             }
         }
@@ -130,6 +140,7 @@ class AuthViewModel @Inject constructor(
                         } else state.copy(auth = AuthUIState.Error(it.message), authRefreshToken = AuthActionUIState.Error(it.message))
                     },
                     onFailure = {
+                        Log.e("AuthViewModel", "Refresh token failed", it)
                         state.copy(auth = AuthUIState.Error(it.message ?: "Unknown error"), authRefreshToken = AuthActionUIState.Error(it.message ?: "Unknown error"))
                     }
                 )
