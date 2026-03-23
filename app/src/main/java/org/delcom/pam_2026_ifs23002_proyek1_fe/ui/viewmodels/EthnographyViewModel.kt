@@ -21,7 +21,7 @@ sealed interface ProfileUIState {
 }
 
 sealed interface EthnographiesUIState {
-    data class Success(val data: List<ResponseEthnographyData>) : EthnographiesUIState
+    data class Success(val data: List<ResponseEthnographyData>, val isLastPage: Boolean = false) : EthnographiesUIState
     data class Error(val message: String) : EthnographiesUIState
     object Loading : EthnographiesUIState
 }
@@ -47,7 +47,10 @@ data class UIStateEthnography(
     var ethnographyChange: EthnographyActionUIState = EthnographyActionUIState.Idle,
     var ethnographyDelete: EthnographyActionUIState = EthnographyActionUIState.Idle,
     var ethnographyChangeImage: EthnographyActionUIState = EthnographyActionUIState.Idle,
-    var profilePhotoChange: EthnographyActionUIState = EthnographyActionUIState.Idle
+    var profilePhotoChange: EthnographyActionUIState = EthnographyActionUIState.Idle,
+    val isLoadingMore: Boolean = false,
+    val currentPage: Int = 1,
+    val selectedRegion: String = "Semua"
 )
 
 @HiltViewModel
@@ -57,6 +60,8 @@ class EthnographyViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(UIStateEthnography())
     val uiState = _uiState.asStateFlow()
+
+    private var currentSearch: String? = null
 
     fun getProfile(authToken: String) {
         viewModelScope.launch {
@@ -155,18 +160,73 @@ class EthnographyViewModel @Inject constructor(
         }
     }
 
-    fun getAllEthnographies(authToken: String, search: String? = null) {
+    fun getAllEthnographies(authToken: String, search: String? = null, region: String = "Semua") {
+        currentSearch = search
         viewModelScope.launch {
-            _uiState.update { it.copy(ethnographies = EthnographiesUIState.Loading) }
+            _uiState.update { it.copy(
+                ethnographies = EthnographiesUIState.Loading,
+                currentPage = 1,
+                selectedRegion = region
+            ) }
+            
+            // Note: Assuming API supports search. Adding filter logic locally if API doesn't support region param yet.
+            // If repository/API supports pagination and region filtering, update repository call accordingly.
             val response = runCatching { repository.getEthnographies(authToken, search) }
             _uiState.update { state ->
                 response.fold(
                     onSuccess = {
-                        if (it.status == "success") EthnographiesUIState.Success(it.data?.ethnographies ?: emptyList())
-                        else EthnographiesUIState.Error(it.message)
+                        if (it.status == "success") {
+                            var list = it.data?.ethnographies ?: emptyList()
+                            if (region != "Semua") {
+                                list = list.filter { item -> item.region.contains(region, ignoreCase = true) }
+                            }
+                            // Simulating first page
+                            EthnographiesUIState.Success(list.take(10), isLastPage = list.size <= 10)
+                        } else {
+                            EthnographiesUIState.Error(it.message)
+                        }
                     },
                     onFailure = { EthnographiesUIState.Error(it.message ?: "Unknown error") }
                 ).let { state.copy(ethnographies = it) }
+            }
+        }
+    }
+
+    fun loadNextPage(authToken: String) {
+        val currentState = _uiState.value
+        if (currentState.isLoadingMore || (currentState.ethnographies as? EthnographiesUIState.Success)?.isLastPage == true) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingMore = true) }
+            val nextPage = currentState.currentPage + 1
+            
+            val response = runCatching { repository.getEthnographies(authToken, currentSearch) }
+            _uiState.update { state ->
+                response.fold(
+                    onSuccess = {
+                        if (it.status == "success") {
+                            var list = it.data?.ethnographies ?: emptyList()
+                            if (state.selectedRegion != "Semua") {
+                                list = list.filter { item -> item.region.contains(state.selectedRegion, ignoreCase = true) }
+                            }
+                            
+                            val currentList = (state.ethnographies as? EthnographiesUIState.Success)?.data ?: emptyList()
+                            val nextItems = list.drop(currentList.size).take(10)
+                            val newList = currentList + nextItems
+                            
+                            state.copy(
+                                ethnographies = EthnographiesUIState.Success(newList, isLastPage = newList.size >= list.size),
+                                currentPage = nextPage,
+                                isLoadingMore = false
+                            )
+                        } else {
+                            state.copy(isLoadingMore = false)
+                        }
+                    },
+                    onFailure = { 
+                        state.copy(isLoadingMore = false)
+                    }
+                )
             }
         }
     }

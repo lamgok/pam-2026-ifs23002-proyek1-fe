@@ -18,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -38,15 +39,9 @@ import org.delcom.pam_2026_ifs23002_proyek1_fe.network.ethnography.data.Response
 import org.delcom.pam_2026_ifs23002_proyek1_fe.ui.components.BottomNavComponent
 import org.delcom.pam_2026_ifs23002_proyek1_fe.ui.components.EmptyStateUI
 import org.delcom.pam_2026_ifs23002_proyek1_fe.ui.components.LoadingUI
+import org.delcom.pam_2026_ifs23002_proyek1_fe.ui.theme.EthnoGold
+import org.delcom.pam_2026_ifs23002_proyek1_fe.ui.theme.EthnoEarth
 import org.delcom.pam_2026_ifs23002_proyek1_fe.ui.viewmodels.*
-
-// Define Slate Palette (Tailwind Inspired)
-private val Slate50 = Color(0xFFF8FAFC)
-private val Slate100 = Color(0xFFF1F5F9)
-private val Slate200 = Color(0xFFE2E8F0)
-private val Slate900 = Color(0xFF0F172A)
-private val Slate950 = Color(0xFF020617)
-private val Slate800 = Color(0xFF1E293B)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,12 +61,6 @@ fun HomeScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     val userName = (uiStateEthnography.profile as? ProfileUIState.Success)?.data?.name ?: "User"
-
-    // Colors based on theme
-    val bgColor = if (isDark) Slate950 else Slate50
-    val textColor = if (isDark) Slate100 else Slate900
-    val cardBg = if (isDark) Slate900 else Color.White
-    val borderColor = if (isDark) Slate800 else Slate200
 
     LaunchedEffect(Unit) {
         if (isLoading) return@LaunchedEffect
@@ -116,15 +105,14 @@ fun HomeScreen(
     }
 
     Scaffold(
-        containerColor = bgColor,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
                         "Etnografi Indonesia",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = Color.White
                     )
                 },
                 actions = {
@@ -133,7 +121,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .clip(CircleShape)
-                            .background(if (isDark) Slate800 else Slate200)
+                            .background(Color.White.copy(alpha = 0.2f))
                     ) {
                         AnimatedContent(
                             targetState = isDark,
@@ -145,7 +133,7 @@ fun HomeScreen(
                             Icon(
                                 imageVector = if (dark) Icons.Default.LightMode else Icons.Default.DarkMode,
                                 contentDescription = "Toggle Theme",
-                                tint = if (dark) Color(0xFFFFD600) else Slate900,
+                                tint = if (dark) EthnoGold else Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -154,13 +142,16 @@ fun HomeScreen(
                         Icon(
                             Icons.Default.Person,
                             contentDescription = "Profile",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = bgColor
-                )
+                    containerColor = Color.Transparent
+                ),
+                modifier = Modifier.background(Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.primary, EthnoEarth)))
+                    .shadow(8.dp, RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
+                    .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
             )
         },
         floatingActionButton = {
@@ -168,8 +159,8 @@ fun HomeScreen(
                 onClick = { RouteHelper.to(navController, ConstHelper.RouteNames.EthnographiesAdd.path) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.shadow(8.dp, RoundedCornerShape(16.dp))
+                shape = RoundedCornerShape(topStart = 16.dp, bottomEnd = 16.dp, topEnd = 4.dp, bottomStart = 4.dp),
+                modifier = Modifier.shadow(8.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Tambah")
             }
@@ -181,6 +172,14 @@ fun HomeScreen(
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize()) {
+            // Pattern Background (Subtle)
+            Text(
+                "✧", 
+                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp).alpha(0.05f),
+                fontSize = 120.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize(),
@@ -192,22 +191,22 @@ fun HomeScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, borderColor, RoundedCornerShape(28.dp)),
-                        shape = RoundedCornerShape(28.dp),
-                        colors = CardDefaults.cardColors(containerColor = cardBg),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                            .border(1.dp, MaterialTheme.colorScheme.outline.copy(0.1f), RoundedCornerShape(topStart = 32.dp, bottomEnd = 32.dp)),
+                        shape = RoundedCornerShape(topStart = 32.dp, bottomEnd = 32.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(modifier = Modifier.padding(24.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(8.dp)
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.primary)
+                                Icon(
+                                    Icons.Default.AutoAwesome,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Etnografi Indonesia v2.0",
+                                    text = "Warisan Budaya Nusantara",
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold
@@ -217,13 +216,12 @@ fun HomeScreen(
                             Text(
                                 text = "Halo, $userName!",
                                 style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Black,
-                                color = textColor
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Jelajahi keberagaman budaya Nusantara.",
+                                text = "Jelajahi keberagaman 1.340 suku bangsa.",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = textColor.copy(alpha = 0.6f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(24.dp))
                             OutlinedTextField(
@@ -232,18 +230,13 @@ fun HomeScreen(
                                     searchQuery = it
                                     ethnographyViewModel.getAllEthnographies(authToken!!, it)
                                 },
-                                placeholder = { Text("Cari suku atau wilayah...", color = textColor.copy(alpha = 0.4f)) },
+                                placeholder = { Text("Cari suku...", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-                                shape = RoundedCornerShape(16.dp),
+                                shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedContainerColor = bgColor,
-                                    unfocusedContainerColor = bgColor,
                                     focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = borderColor,
-                                    cursorColor = MaterialTheme.colorScheme.primary,
-                                    focusedTextColor = textColor,
-                                    unfocusedTextColor = textColor
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(0.3f)
                                 ),
                                 singleLine = true
                             )
@@ -252,30 +245,16 @@ fun HomeScreen(
                 }
 
                 item(span = { GridItemSpan(2) }) {
-                    Row(
-                        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Katalog Suku",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = textColor
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(
-                            text = "Lihat Semua",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.clickable { }
-                        )
-                    }
+                    Text(
+                        text = "Katalog Suku",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
 
                 when (val ethState = uiStateEthnography.ethnographies) {
                     is EthnographiesUIState.Loading -> {
-                        items(6) { SkeletonCard(borderColor) }
+                        items(6) { SkeletonCard(MaterialTheme.colorScheme.outline.copy(0.1f)) }
                     }
                     is EthnographiesUIState.Success -> {
                         if (ethState.data.isEmpty()) {
@@ -283,7 +262,7 @@ fun HomeScreen(
                         } else {
                             items(ethState.data) { item ->
                                 FadeInAnimatedVisibility {
-                                    EthnographyGridCard(item, cardBg, borderColor, textColor) {
+                                    EthnographyGridCard(item) {
                                         RouteHelper.to(navController, ConstHelper.RouteNames.EthnographiesDetail.path.replace("{id}", item.id))
                                     }
                                 }
@@ -304,19 +283,16 @@ fun HomeScreen(
 @Composable
 fun EthnographyGridCard(
     item: ResponseEthnographyData, 
-    cardBg: Color, 
-    borderColor: Color, 
-    textColor: Color, 
     onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .border(1.dp, borderColor, RoundedCornerShape(24.dp)),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = cardBg),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(0.05f), RoundedCornerShape(topStart = 24.dp, bottomEnd = 24.dp)),
+        shape = RoundedCornerShape(topStart = 24.dp, bottomEnd = 24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
             Box(modifier = Modifier.height(140.dp).fillMaxWidth()) {
@@ -332,33 +308,30 @@ fun EthnographyGridCard(
                         .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f)),
-                                startY = 200f
+                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                                startY = 150f
                             )
                         )
                 )
-            }
-            Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = item.tribeName,
+                    item.tribeName,
+                    modifier = Modifier.align(Alignment.BottomStart).padding(12.dp),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = textColor,
+                    color = Color.White,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, contentDescription = null, modifier = Modifier.size(12.dp), tint = MaterialTheme.colorScheme.primary)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = item.region,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = textColor.copy(alpha = 0.5f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            }
+            Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.LocationOn, contentDescription = null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = item.region,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
@@ -371,7 +344,7 @@ fun SkeletonCard(borderColor: Color) {
         initialValue = 0.3f, targetValue = 0.7f,
         animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse), label = "alpha"
     )
-    Box(modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(24.dp)).background(borderColor.copy(alpha = alpha)))
+    Box(modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(topStart = 24.dp, bottomEnd = 24.dp)).background(borderColor.copy(alpha = alpha)))
 }
 
 fun rotateIn() = fadeIn() + expandIn()

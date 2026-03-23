@@ -150,8 +150,15 @@ fun EthnographyUpsertScreen(
             }
         } else if (imageState is EthnographyActionUIState.Error) {
             isProcessing = false
-            scope.launch { snackbarHost.showSnackbar("Gagal mengunggah gambar: ${imageState.message}") }
-            viewModel.resetActionStates()
+            
+            // Perbaikan: Tetap kembali ke daftar meskipun upload gambar gagal (opsional, tapi seringkali user ingin datanya tetap tersimpan)
+            // Atau berikan pilihan kepada user. Di sini saya buat agar tetap kembali ke list jika data teks sudah berhasil.
+            scope.launch { 
+                snackbarHost.showSnackbar("Data tersimpan, tapi gagal mengunggah gambar: ${imageState.message}")
+                viewModel.resetActionStates()
+                viewModel.getAllEthnographies(authToken)
+                navController.popBackStack()
+            }
         }
     }
 

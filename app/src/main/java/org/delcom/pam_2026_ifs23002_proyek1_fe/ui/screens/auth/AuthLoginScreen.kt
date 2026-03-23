@@ -218,7 +218,7 @@ private fun AuthLoginUI(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_logo),
+                    painter = painterResource(id = R.drawable.logo_karya_budaya),
                     contentDescription = "Logo",
                     modifier = Modifier.size(80.dp),
                     contentScale = ContentScale.Fit
